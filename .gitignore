@@ -1,0 +1,7 @@
+.build
+.mbed
+.hg
+projectfiles
+*.py*
+USBDevice
+mbed-os
