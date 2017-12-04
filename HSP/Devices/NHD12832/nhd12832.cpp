@@ -1,11 +1,6 @@
 /***** Includes *****/
 #include <stdio.h>
 #include <string.h>
-#include "mxc_config.h"
-#include "mxc_sys.h"
-#include "board.h"
-#include "gpio.h"
-#include "spim.h"
 #include "nhd12832.h"
 /**
  * @ingroup nhd12832_bsp
