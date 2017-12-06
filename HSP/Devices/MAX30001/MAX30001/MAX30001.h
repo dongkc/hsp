@@ -31,12 +31,12 @@
  *******************************************************************************/
 /**
  *
- * Maxim Integrated MAX30001 ECG/BIOZ chip 
+ * Maxim Integrated MAX30001 ECG/BIOZ chip
  *
  * @code
  * #include "mbed.h"
  * #include "MAX30001.h"
- * 
+ *
  * /// Initialization values for ECG_InitStart()
  * #define EN_ECG     0b1
  * #define OPENP      0b1
@@ -49,40 +49,40 @@
  * #define GAIN       0b00
  * #define DHPF       0b0
  * #define DLPF       0b01
- * 
- * /// Initialization values for CAL_InitStart() 
+ *
+ * /// Initialization values for CAL_InitStart()
  * #define EN_VCAL  0b1
  * #define VMODE    0b1
  * #define VMAG     0b1
  * #define FCAL     0b011
  * #define THIGH    0x7FF
  * #define FIFTY    0b0
- * 
+ *
  * /// Initializaton values for Rbias_FMSTR_Init()
- * #define EN_RBIAS 0b01 
+ * #define EN_RBIAS 0b01
  * #define RBIASV   0b10
  * #define RBIASP   0b1
  * #define RBIASN   0b1
  * #define FMSTR    0b00
- * 
+ *
  * #define BUFFER_LENGTH 50
- * 
+ *
  * // @brief SPI Master 0 with SPI0_SS for use with MAX30001
  * SPI spi(SPI0_MOSI, SPI0_MISO, SPI0_SCK, SPI0_SS); // used by MAX30001
- * 
+ *
  * //@brief ECG device
  * MAX30001 max30001(&spi);
  * InterruptIn max30001_InterruptB(P3_6);
  * InterruptIn max30001_Interrupt2B(P4_5);
  * //@brief PWM used as fclk for the MAX30001
  * PwmOut pwmout(P1_7);
- * 
+ *
  * //@brief Creating a buffer to hold the data
  * uint32_t ecgBuffer[BUFFER_LENGTH];
  * int ecgIndex = 0;
  * char data_trigger = 0;
- * 
- * 
+ *
+ *
  * //
  * // @brief Creates a packet that will be streamed via USB Serial
  * //       the packet created will be inserted into a fifo to be streamed at a later time
@@ -113,12 +113,12 @@
  *         /// Add code for reading RtoR data
  *   }
  * }
- * 
- * 
+ *
+ *
  * int main() {
- * 
+ *
  *   uint32_t all;
- * 
+ *
  *   /// set NVIC priorities for GPIO to prevent priority inversion
  *   NVIC_SetPriority(GPIO_P0_IRQn, 5);
  *   NVIC_SetPriority(GPIO_P1_IRQn, 5);
@@ -129,58 +129,58 @@
  *   NVIC_SetPriority(GPIO_P6_IRQn, 5);
  *   // used by the MAX30001
  *   NVIC_SetPriority(SPI1_IRQn, 0);
- * 
- * 
+ *
+ *
  *   /// Setup interrupts and callback functions
  *   max30001_InterruptB.disable_irq();
  *   max30001_Interrupt2B.disable_irq();
- * 
+ *
  *   max30001_InterruptB.mode(PullUp);
  *   max30001_InterruptB.fall(&MAX30001::Mid_IntB_Handler);
- * 
+ *
  *   max30001_Interrupt2B.mode(PullUp);
  *   max30001_Interrupt2B.fall(&MAX30001::Mid_Int2B_Handler);
- * 
+ *
  *   max30001_InterruptB.enable_irq();
  *   max30001_Interrupt2B.enable_irq();
- * 
+ *
  *   max30001.AllowInterrupts(1);
- * 
+ *
  *   // Configuring the FCLK for the ECG, set to 32.768KHZ
  *   pwmout.period_us(31);
  *   pwmout.write(0.5);     // 0-1 is 0-100%, 0.5 = 50% duty cycle.
  *   max30001.sw_rst();     // Do a software reset of the MAX30001
- *   
+ *
  *   max30001.INT_assignment(MAX30001::MAX30001_INT_B,    MAX30001::MAX30001_NO_INT,   MAX30001::MAX30001_NO_INT,  //  en_enint_loc,      en_eovf_loc,   en_fstint_loc,
  *                           MAX30001::MAX30001_INT_2B,   MAX30001::MAX30001_INT_2B,   MAX30001::MAX30001_NO_INT,  //  en_dcloffint_loc,  en_bint_loc,   en_bovf_loc,
  *                           MAX30001::MAX30001_INT_2B,   MAX30001::MAX30001_INT_2B,   MAX30001::MAX30001_NO_INT,  //  en_bover_loc,      en_bundr_loc,  en_bcgmon_loc,
  *                           MAX30001::MAX30001_INT_B,    MAX30001::MAX30001_NO_INT,   MAX30001::MAX30001_NO_INT,  //  en_pint_loc,       en_povf_loc,   en_pedge_loc,
  *                           MAX30001::MAX30001_INT_2B,   MAX30001::MAX30001_INT_B,    MAX30001::MAX30001_NO_INT,  //  en_lonint_loc,     en_rrint_loc,  en_samp_loc,
  *                           MAX30001::MAX30001_INT_ODNR, MAX30001::MAX30001_INT_ODNR);                            //  intb_Type,         int2b_Type)
- * 
- *   max30001.onDataAvailable(&StreamPacketUint32_ecg);  
- * 
+ *
+ *   max30001.onDataAvailable(&StreamPacketUint32_ecg);
+ *
  *   /// Set and Start the VCAL input
- *   /// @brief NOTE VCAL must be set first if VCAL is to be used 
+ *   /// @brief NOTE VCAL must be set first if VCAL is to be used
  *     max30001.CAL_InitStart(EN_VCAL , VMODE, VMAG, FCAL, THIGH, FIFTY);
- *           
+ *
  *   /// ECG Initialization
  *     max30001.ECG_InitStart(EN_ECG, OPENP, OPENN, POL, CALP_SEL, CALN_SEL, E_FIT, RATE, GAIN, DHPF, DLPF);
- * 
+ *
  *   /// @details The user can call any of the InitStart functions for Pace, BIOZ and RtoR
- * 
- * 
+ *
+ *
  *   /// @brief Set Rbias & FMSTR over here
  *       max30001.Rbias_FMSTR_Init(EN_RBIAS, RBIASV, RBIASP, RBIASN,FMSTR);
- * 
+ *
  *   max30001.synch();
- * 
+ *
  *   /// clear the status register for a clean start
- *   max30001.reg_read(MAX30001::STATUS, &all);  
- *   
+ *   max30001.reg_read(MAX30001::STATUS, &all);
+ *
  *   printf("Please wait for data to start streaming\n");
  *   fflush(stdout);
- *     
+ *
  *   while (1) {
  *     if(data_trigger == 1){
  *     printf("%ld ", ecgBuffer[ecgIndex]);  // Print the ECG data on a serial port terminal software
@@ -188,7 +188,7 @@
  *     }
  *   }
  * }
- * @endcode 
+ * @endcode
  *
  */
 
@@ -318,7 +318,7 @@ public:
   } MAX30001_REG_map_t;
 
   /**
-   * @brief STATUS (0x01) 
+   * @brief STATUS (0x01)
    */
   typedef union max30001_status_reg {
     uint32_t all;
@@ -360,9 +360,9 @@ public:
 
   } max30001_status_t;
 
-  
+
   /**
-   * @brief EN_INT (0x02) 
+   * @brief EN_INT (0x02)
    */
 
   typedef union max30001_en_int_reg {
@@ -404,10 +404,10 @@ public:
 
   } max30001_en_int_t;
 
-  
+
   /**
-   * @brief EN_INT2 (0x03) 
-   */  
+   * @brief EN_INT2 (0x03)
+   */
   typedef union max30001_en_int2_reg {
     uint32_t all;
 
@@ -448,8 +448,8 @@ public:
   } max30001_en_int2_t;
 
   /**
-   * @brief MNGR_INT (0x04) 
-   */  
+   * @brief MNGR_INT (0x04)
+   */
   typedef union max30001_mngr_int_reg {
     uint32_t all;
 
@@ -473,8 +473,8 @@ public:
   } max30001_mngr_int_t;
 
    /**
-   * @brief MNGR_DYN (0x05) 
-   */ 
+   * @brief MNGR_DYN (0x05)
+   */
   typedef union max30001_mngr_dyn_reg {
     uint32_t all;
 
@@ -488,9 +488,9 @@ public:
 
   } max30001_mngr_dyn_t;
 
-  
+
    /**
-   * @brief INFO (0x0F) 
+   * @brief INFO (0x0F)
    */
   typedef union max30001_info_reg {
     uint32_t all;
@@ -507,7 +507,7 @@ public:
   } max30001_info_t;
 
    /**
-   * @brief CNFG_GEN (0x10) 
+   * @brief CNFG_GEN (0x10)
    */
   typedef union max30001_cnfg_gen_reg {
     uint32_t all;
@@ -532,10 +532,10 @@ public:
 
   } max30001_cnfg_gen_t;
 
-  
+
    /**
-   * @brief CNFG_CAL (0x12) 
-   */  
+   * @brief CNFG_CAL (0x12)
+   */
   typedef union max30001_cnfg_cal_reg {
     uint32_t all;
     struct {
@@ -553,7 +553,7 @@ public:
   } max30001_cnfg_cal_t;
 
    /**
-   * @brief CNFG_EMUX  (0x14) 
+   * @brief CNFG_EMUX  (0x14)
    */
   typedef union max30001_cnfg_emux_reg {
     uint32_t all;
@@ -570,10 +570,10 @@ public:
 
   } max30001_cnfg_emux_t;
 
-  
+
    /**
-   * @brief CNFG_ECG   (0x15) 
-   */  
+   * @brief CNFG_ECG   (0x15)
+   */
   typedef union max30001_cnfg_ecg_reg {
     uint32_t all;
     struct {
@@ -591,8 +591,8 @@ public:
   } max30001_cnfg_ecg_t;
 
    /**
-   * @brief CNFG_BMUX   (0x17) 
-   */  
+   * @brief CNFG_BMUX   (0x17)
+   */
   typedef union max30001_cnfg_bmux_reg {
     uint32_t all;
     struct {
@@ -615,8 +615,8 @@ public:
   } max30001_cnfg_bmux_t;
 
    /**
-   * @brief CNFG_BIOZ   (0x18) 
-   */ 
+   * @brief CNFG_BIOZ   (0x18)
+   */
   typedef union max30001_bioz_reg {
     uint32_t all;
     struct {
@@ -636,10 +636,10 @@ public:
 
   } max30001_cnfg_bioz_t;
 
-  
+
    /**
-   * @brief CNFG_PACE   (0x1A) 
-   */   
+   * @brief CNFG_PACE   (0x1A)
+   */
   typedef union max30001_cnfg_pace_reg {
     uint32_t all;
 
@@ -660,8 +660,8 @@ public:
   } max30001_cnfg_pace_t;
 
    /**
-   * @brief CNFG_RTOR1   (0x1D) 
-   */   
+   * @brief CNFG_RTOR1   (0x1D)
+   */
   typedef union max30001_cnfg_rtor1_reg {
     uint32_t all;
     struct {
@@ -678,8 +678,8 @@ public:
   } max30001_cnfg_rtor1_t;
 
    /**
-   * @brief CNFG_RTOR2 (0x1E) 
-   */   
+   * @brief CNFG_RTOR2 (0x1E)
+   */
   typedef union max30001_cnfg_rtor2_reg {
     uint32_t all;
     struct {
@@ -744,7 +744,7 @@ public:
   uint32_t max30001_DCLeadOff; ///< This holds the LeadOff data, Last 4 bits give
                                ///< the status, BIT3=LOFF_PH, BIT2=LOFF_PL,
                                ///< BIT1=LOFF_NH, BIT0=LOFF_NL
-                               ///< 8th and 9th bits tell Lead off is due to ECG or BIOZ.  
+                               ///< 8th and 9th bits tell Lead off is due to ECG or BIOZ.
                                ///< 0b01 = ECG Lead Off and 0b10 = BIOZ Lead off
 
   uint32_t max30001_ACLeadOff; ///< This gives the state of the BIOZ AC Lead Off
@@ -786,13 +786,13 @@ public:
    * MAX30001 destructor
    */
   ~MAX30001(void);
-  
+
   /**
    * @brief This function is MAXIM Proprietary.  It channels the RTC crystal
    * @brief clock to P1.7.  Thus providing 32768Hz on FCLK pin of the MAX30001-3
-   */ 
-  void FCLK_MaximOnly(void);   
-  
+   */
+  void FCLK_MaximOnly(void);
+
   /**
    * @brief This function sets up the Resistive Bias mode and also selects the master clock frequency.
    * @brief Uses Register: CNFG_GEN-0x10
@@ -1211,7 +1211,7 @@ public:
 
   /// @brief function pointer to the async callback
   static event_callback_t functionpointer;
-  
+
   /// @brief flag used to indicate an async xfer has taken place
   static volatile int xferFlag;
 
@@ -1233,7 +1233,7 @@ private:
    * @param length length of 32-bit elements available
    */
   void dataAvailable(uint32_t id, uint32_t *buffer, uint32_t length);
-  
+
   /**
    * @brief Transmit and recieve QUAD SPI data
    * @param tx_buf pointer to transmit byte buffer

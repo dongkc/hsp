@@ -1,7 +1,9 @@
 /***** Includes *****/
+#include "mbed.h"
+#include "nhd12832.h"
+
 #include <stdio.h>
 #include <string.h>
-#include "nhd12832.h"
 /**
  * @ingroup nhd12832_bsp
  * @{

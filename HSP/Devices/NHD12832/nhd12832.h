@@ -1,10 +1,6 @@
 #ifndef _NHD12832_H
 #define _NHD12832_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /**
  * @ingroup bsp
  * @defgroup nhd12832_bsp NHD12832 Display Driver BSP

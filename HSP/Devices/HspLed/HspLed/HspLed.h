@@ -60,25 +60,25 @@ public:
   * @brief Constructor where you specify the LED pin name
   */
   HspLed(PinName ledPin);
-  
+
   /**
   * @brief Blink the HSP LED at a set time interval
   * @param mSeconds Number of seconds to set the timer interval
   */
   void blink(uint32_t mSeconds);
-  
+
   /**
   * @brief Start rotating the LED through a 32-bit pattern at a mS rate specified
   * @param pattern 32-bit pattern to rotate through
   * @param mSeconds the amount of time to take per bit in the pattern
-  */ 
+  */
   void pattern(uint32_t pattern, uint32_t mSeconds);
-  
+
   /**
   * @brief Turn the LED on
   */
   void on(void);
-  
+
   /**
   * @brief Turn the LED off
   */
@@ -86,7 +86,7 @@ public:
 
   /**
   * @brief Update the LED
-  */ 
+  */
   void service(void);
 
 private:
@@ -97,7 +97,7 @@ private:
   * @param mode Mode to set the LED to
   */
   void setMode(eMode_t state);
-  
+
   /**
   * @brief Toggle the state of the LED
   */
@@ -112,11 +112,11 @@ private:
   * @brief Stop blinking or rotating through a pattern
   */
   void stop(void);
-  
+
   /**
   * @brief Write the LED pin to a state
   * @param state A one or zero value to write to the LED pin
-  */  
+  */
   void state(int state);
 
   /**
@@ -128,32 +128,32 @@ private:
    * @brief timer interval in mS
    */
   float timerInterval;
-  
+
   /**
    * @brief last timer interval set to... used to prevent resetting the timer to the same value
    */
   float timerIntervalLast;
- 
-  /** 
+
+  /**
    * @brief local state of the pattern to rotate through
-   */ 
+   */
   uint32_t bitPattern;
- 
+
   /**
    * @brief current mode of the LED
    */
   eMode_t mode;
- 
+
   /**
    * @brief the LED digital output
    */
   DigitalOut redLed;
- 
+
   /**
    * @brief Timer service used to update the LED
    */
   Ticker ticker;
- 
+
   /**
    * @brief Flag to indicate if the timer has been started
    */

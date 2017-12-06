@@ -4,6 +4,5 @@
 projectfiles
 *.py*
 USBDevice
-mbed-os
 G*
 BUILD

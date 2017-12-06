@@ -42,13 +42,13 @@
 #define ADDRESS_INC_64K     0x10000
 
 #define ADDRESS_4K_START        0x0
-#define ADDRESS_4K_END          0x8000  
-  
+#define ADDRESS_4K_END          0x8000
+
 #define ADDRESS_32K_START       0x8000
-#define ADDRESS_32k_END         0x10000  
-  
+#define ADDRESS_32k_END         0x10000
+
 #define ADDRESS_64K_START       0x10000
-#define ADDRESS_64k_END         0x2000000  
+#define ADDRESS_64k_END         0x2000000
 
 #define SIZE_OF_EXTERNAL_FLASH  0x2000000 // 33,554,432 Bytes
 #define SIZE_OF_PAGE            0x100
@@ -82,7 +82,7 @@ class S25FS512 {
 public:
 
   ///< @detail S25FS512 Commands
-  typedef enum{ 
+  typedef enum{
     Write_Reg              = 0x01,
     Read_Status_Reg1       = 0x05,
     Write_Enable           = 0x06,
@@ -125,12 +125,12 @@ public:
   /** @brief Write a Page
   */
   int8_t writePage_Helper(uint32_t pageNumber, uint8_t *buffer, uint32_t offset);
-  
-  /** @brief Read a Page 
+
+  /** @brief Read a Page
   */
   int8_t readPages_Helper(uint32_t startPageNumber,uint32_t endPageNumber, uint8_t *buffer, uint32_t offset);
 
-  /** @brief Erase a Sector 
+  /** @brief Erase a Sector
   @param address Address of sector to erase
   */
   int8_t sectorErase_Helper(uint32_t address);
@@ -141,15 +141,15 @@ public:
   */
   bool isPageEmpty(uint8_t *ptr);
 
-  /** @brief Issue a software reset to the flash device 
+  /** @brief Issue a software reset to the flash device
   */
   uint8_t reset(void);
 
   /** @brief Enable a hardware reset
   */
   uint8_t enableHWReset(void);
-  
-  /** @brief Read the id byte of this device 
+
+  /** @brief Read the id byte of this device
   */
   void readID(uint8_t *id);
 

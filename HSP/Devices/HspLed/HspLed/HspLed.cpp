@@ -37,23 +37,23 @@
 void hspled_int_handler(void);
 
 //*******************************************************************************
-HspLed::HspLed(PinName ledPin) : 
+HspLed::HspLed(PinName ledPin) :
  timerInterval(500), timerIntervalLast(-1), redLed(LED_RED, 0), isStarted(false) {
 }
 
 //*******************************************************************************
-void HspLed::state(int state) { 
-  redLed.write(state); 
+void HspLed::state(int state) {
+  redLed.write(state);
 }
 
 //*******************************************************************************
-void HspLed::toggle(void) { 
-  state(!redLed.read()); 
+void HspLed::toggle(void) {
+  state(!redLed.read());
 }
 
 //*******************************************************************************
-void HspLed::setMode(eMode mode) { 
-  this->mode = mode; 
+void HspLed::setMode(eMode mode) {
+  this->mode = mode;
 }
 
 //*******************************************************************************

@@ -68,59 +68,59 @@ MAX30001::~MAX30001(void) {
 
 //******************************************************************************
 void MAX30001::FCLK_MaximOnly(void){
- 
+
   // Use RTC crystal clock for MAX30001 FCLK
 /*
   mxc_pwrseq_reg0_t pwr_reg0;
   mxc_pwrseq_reg4_t pwr_reg4;
- 
+
   // Set the port pin connected to the MAX30001 FCLK pin as an output
   GPIO_SetOutMode(MAX30001_INT_PORT_FCLK, MAX30001_INT_PIN_FCLK, MXC_E_GPIO_OUT_MODE_NORMAL);
- 
+
   // Enable Real Time Clock in Run and Sleep modes
   pwr_reg0 = MXC_PWRSEQ->reg0_f;
   pwr_reg0.pwr_rtcen_run = 1;
   pwr_reg0.pwr_rtcen_slp = 1;
   MXC_PWRSEQ->reg0_f = pwr_reg0;
- 
+
   // Enable the RTC clock output path on P1.7
   pwr_reg4 = MXC_PWRSEQ->reg4_f;
   pwr_reg4.pwr_pseq_32k_en = 1;
   MXC_PWRSEQ->reg4_f = pwr_reg4;
 */
- 
+
   #define PORT_FCLK 1
   #define PIN_FCLK  7
- 
+
   // Set the Port pin connected to the MAX30001 FCLK pin as an output
   uint32_t temp = MXC_GPIO->out_mode[PORT_FCLK];  // Port 1
-  
+
   //    temp = (temp & ~(0xF << (pin * 4))) | (val << (pin * 4));
                                /* pin 7 */      /* NORMAL MODE */
   temp = (temp & ~(0xF << (PIN_FCLK * 4))) | (MXC_V_GPIO_OUT_MODE_NORMAL << (PIN_FCLK * 4));
-  
- 
+
+
 //    temp = (temp & ~(0xF << (7 * 4))) | (5 << (7 * 4));
-  
+
   MXC_GPIO->out_mode[PORT_FCLK] = temp;
-  
-  
+
+
   // Enable Real Time Clock in Run and Sleep Modes
   MXC_PWRSEQ->reg0 = MXC_PWRSEQ->reg0 | MXC_F_PWRSEQ_REG0_PWR_RTCEN_RUN |  MXC_F_PWRSEQ_REG0_PWR_RTCEN_SLP;
-  
+
   // Enable the RTC clock output path on P1.7
   MXC_PWRSEQ->reg4 = MXC_PWRSEQ->reg4 | MXC_F_PWRSEQ_REG4_PWR_PSEQ_32K_EN;
-    
+
 }
- 
+
 
 //******************************************************************************
 int MAX30001::Rbias_FMSTR_Init(uint8_t En_rbias, uint8_t Rbiasv,
                                uint8_t Rbiasp, uint8_t Rbiasn,
                                uint8_t Fmstr) {
-                                        	
-  max30001_cnfg_gen_t cnfg_gen;                                        	
-                                        	
+
+  max30001_cnfg_gen_t cnfg_gen;
+
   if (reg_read(CNFG_GEN, &cnfg_gen.all) == -1) {
     return -1;
   }
@@ -141,9 +141,9 @@ int MAX30001::Rbias_FMSTR_Init(uint8_t En_rbias, uint8_t Rbiasv,
 int MAX30001::CAL_InitStart(uint8_t En_Vcal, uint8_t Vmode,
                             uint8_t Vmag, uint8_t Fcal, uint16_t Thigh,
                             uint8_t Fifty) {
-             
+
   max30001_cnfg_cal_t cnfg_cal;
-                  
+
   ///< CNFG_CAL
   if (reg_read(CNFG_CAL, &cnfg_cal.all) == -1) {
     return -1;
@@ -207,10 +207,10 @@ int MAX30001::INT_assignment(max30001_intrpt_Location_t en_enint_loc,     max300
 
 
 {
-  
+
   max30001_en_int_t en_int;
   max30001_en_int2_t en_int2;
-  
+
   ///< INT1
 
   if (reg_read(EN_INT, &en_int.all) == -1) {
@@ -292,7 +292,7 @@ int MAX30001::ECG_InitStart(uint8_t En_ecg, uint8_t Openp,
   max30001_status_t    status;
   max30001_mngr_int_t  mngr_int;
   max30001_cnfg_ecg_t  cnfg_ecg;
-  
+
   ///< CNFG_EMUX
 
   if (reg_read(CNFG_EMUX, &cnfg_emux.all) == -1) {
@@ -324,13 +324,13 @@ int MAX30001::ECG_InitStart(uint8_t En_ecg, uint8_t Openp,
     return -1;
   }
 
-  ///< Wait for PLL Lock & References to settle down 
+  ///< Wait for PLL Lock & References to settle down
 
   max30001_timeout = 0;
 
   do {
     if (reg_read(STATUS, &status.all) == -1) {// Wait and spin for PLL to lock...
-    
+
       return -1;
     }
   } while (status.bit.pllint == 1 && max30001_timeout++ <= 1000);
@@ -353,7 +353,7 @@ int MAX30001::ECG_InitStart(uint8_t En_ecg, uint8_t Openp,
     return -1;
   }
 
-  cnfg_ecg.bit.rate = Rate; 
+  cnfg_ecg.bit.rate = Rate;
   cnfg_ecg.bit.gain = Gain;
   cnfg_ecg.bit.dhpf = Dhpf;
   cnfg_ecg.bit.dlpf = Dlpf;
@@ -367,10 +367,10 @@ int MAX30001::ECG_InitStart(uint8_t En_ecg, uint8_t Openp,
 
 //******************************************************************************
 int MAX30001::ECGFast_Init(uint8_t Clr_Fast, uint8_t Fast, uint8_t Fast_Th) {
-  
+
   max30001_mngr_int_t mngr_int;
   max30001_mngr_dyn_t mngr_dyn;
-  
+
   if (reg_read(MNGR_INT, &mngr_int.all) == -1) {
     return -1;
   }
@@ -469,7 +469,7 @@ int MAX30001::PACE_InitStart(uint8_t En_pace, uint8_t Clr_pedge,
 
   reg_read(CNFG_PACE, &cnfg_pace.all);
 
-  cnfg_pace.bit.pol         = Pol;         
+  cnfg_pace.bit.pol         = Pol;
   cnfg_pace.bit.gn_diff_off = Gn_diff_off;
   cnfg_pace.bit.gain        = Gain;
   cnfg_pace.bit.aout_lbw    = Aout_lbw;
@@ -512,8 +512,8 @@ int MAX30001::BIOZ_InitStart(
   max30001_status_t    status;
   max30001_mngr_int_t  mngr_int;
   max30001_cnfg_bioz_t cnfg_bioz;
-  
-  
+
+
   // CNFG_BMUX
 
   if (reg_read(CNFG_BMUX, &cnfg_bmux.all) == -1) {
@@ -599,7 +599,7 @@ int MAX30001::BIOZ_InitStart(
 int MAX30001::Stop_BIOZ(void) {
 
   max30001_cnfg_gen_t cnfg_gen;
-  
+
   ///< CNFG_GEN
 
   if (reg_read(CNFG_GEN, &cnfg_gen.all) == -1) {
@@ -653,7 +653,7 @@ int MAX30001::RtoR_InitStart(uint8_t En_rtor, uint8_t Wndw,
     return -1;
   }
 
-  mngr_int.bit.clr_rrint = Clr_rrint; 
+  mngr_int.bit.clr_rrint = Clr_rrint;
   ///< 0b01 & 0b00 are for interrupt mode...
   ///< 0b10 is for monitoring mode... it just overwrites the data...
 
@@ -675,7 +675,7 @@ int MAX30001::RtoR_InitStart(uint8_t En_rtor, uint8_t Wndw,
   if (reg_write(CNFG_RTOR1, cnfg_rtor1.all) == -1) {
     return -1;
   }
-  
+
   ///< RTOR2
   if (reg_read(CNFG_RTOR2, &cnfg_rtor2.all) == -1) {
     return -1;
@@ -822,9 +822,9 @@ int MAX30001::Enable_DcLeadOFF_Init(int8_t En_dcloff, int8_t Ipol,
 
 //******************************************************************************
 int MAX30001::Disable_DcLeadOFF(void) {
-  
+
   max30001_cnfg_gen_t cnfg_gen;
-  
+
   ///< CNFG_GEN
   if (reg_read(CNFG_GEN, &cnfg_gen.all) == -1) {
     return -1;
@@ -876,7 +876,7 @@ int MAX30001::BIOZ_Enable_ACLeadOFF_Init(uint8_t En_bloff, uint8_t Bloff_hi_it,
 int MAX30001::BIOZ_Disable_ACleadOFF(void) {
 
   max30001_cnfg_gen_t cnfg_gen;
-  
+
   ///< CNFG_GEN
   if (reg_read(CNFG_GEN, &cnfg_gen.all) == -1) {
     return -1;
@@ -893,9 +893,9 @@ int MAX30001::BIOZ_Disable_ACleadOFF(void) {
 
 //******************************************************************************
 int MAX30001::BIOZ_Enable_BCGMON(void) {
-  
+
   max30001_cnfg_bioz_t cnfg_bioz;
-  
+
   ///< CNFG_BIOZ
   if (reg_read(CNFG_BIOZ, &cnfg_bioz.all) == -1) {
     return -1;
@@ -914,7 +914,7 @@ int MAX30001::BIOZ_Enable_BCGMON(void) {
 //******************************************************************************
 int MAX30001::Enable_LeadON(int8_t Channel) // Channel: ECG = 0b01, BIOZ = 0b10, Disable = 0b00
 {
-  
+
   max30001_cnfg_gen_t cnfg_gen;
 
   ///< CNFG_GEN
@@ -995,7 +995,7 @@ void MAX30001::ServiceLeadON(uint32_t currentTime) {
   if (delta_Time > LEADON_SERVICE_TIME) {
     switch (leadOnState) {
     case 0: ///< switch to ECG DC Lead ON
-      Enable_LeadON(0b01); 
+      Enable_LeadON(0b01);
       break;
 
     case 1: ///< switch to BIOZ DC Lead ON
@@ -1053,10 +1053,10 @@ int MAX30001::FIFO_LeadONOff_Read(void) {
   if (reg_read(MNGR_INT, &mngr_int.all) == -1) {
     return -1;
   }
-  
+
   if (reg_read(CNFG_GEN, &cnfg_gen.all) == -1) {
     return -1;
-  }  
+  }
 
     total_databytes = (mngr_int.bit.e_fit + 1) * 3;
 
@@ -1092,7 +1092,7 @@ int MAX30001::FIFO_LeadONOff_Read(void) {
     ReadAllPaceOnce = 0;
 
     ///< Put the content of the FIFO based on the EFIT value, We ignore the
-    ///< result[0] and start concatenating indexes: 1,2,3 - 4,5,6 - 7,8,9 - 
+    ///< result[0] and start concatenating indexes: 1,2,3 - 4,5,6 - 7,8,9 -
     for (i = 0, j = 0; i < mngr_int.bit.e_fit + 1; i++, j = j + 3) ///< index1=23-16 bit, index2=15-8 bit, index3=7-0 bit
     {
       max30001_ECG_FIFO_buffer[i] = ((uint32_t)result[j] << 16) + (result[j + 1] << 8) + result[j + 2];
@@ -1398,13 +1398,13 @@ void MAX30001::Mid_IntB_Handler(void) {
   MAX30001::instance->int_handler();
 }
 
-void MAX30001::Mid_Int2B_Handler(void) {  
+void MAX30001::Mid_Int2B_Handler(void) {
   if (allowInterrupts == 0) {
   	return;
   	}
   MAX30001::instance->int_handler();
 }
 
-void MAX30001::AllowInterrupts(int state) { 
-allowInterrupts = state; 
+void MAX30001::AllowInterrupts(int state) {
+allowInterrupts = state;
 }
