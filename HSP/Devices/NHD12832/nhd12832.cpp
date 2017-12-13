@@ -2,8 +2,8 @@
 #include "mbed.h"
 #include "nhd12832.h"
 
-#include <stdio.h>
-#include <string.h>
+// #include <stdio.h>
+// #include <string.h>
 /**
  * @ingroup nhd12832_bsp
  * @{
@@ -157,50 +157,61 @@ static const uint8_t stdfont5x7[] = {
 /***** Globals *****/
 static uint32_t nhd12832_img_buf[NHD12832_WIDTH *(NUM_PAGES/4)];
 
+static DigitalOut nhd12832_dc(NHD12832_DC);
+static DigitalOut nhd12832_res(NHD12832_RES);
+
+static SPI spi_oled(SPI2_MOSI, NC, SPI2_SCK, SPI2_SS);
+
+#define E_NO_ERROR 0
+
 /***** Functions *****/
 
 /* ************************************************************************* */
-static int NHD12832_SendCmd(const uint8_t *cmd, uint32_t size)
+static int NHD12832_SendCmd(const uint8_t *cmd, int size)
 {
-    GPIO_OutClr(&nhd12832_dc);
+    // GPIO_OutClr(&NHD12832_DC);
+    nhd12832_dc = 0;
 
-    spim_req_t req;
-    req.ssel = NHD12832_SSEL;
-    req.deass = 1;
-    req.tx_data = cmd;
-    req.rx_data = NULL;
-    req.width = SPIM_WIDTH_1;
-    req.len = size;
+    // spim_req_t req;
+    // req.ssel = NHD12832_SSEL;
+    // req.deass = 1;
+    // req.tx_data = cmd;
+    // req.rx_data = NULL;
+    // req.width = SPIM_WIDTH_1;
+    // req.len = size;
 
-    if (SPIM_Trans(NHD12832_SPI, &req) != size) {
-        return E_COMM_ERR;
-    }
+    // if (SPIM_Trans(NHD12832_SPI, &req) != size) {
+    //     return E_COMM_ERR;
+    // }
 
     // Wait for transaction to complete
-    while(SPIM_Busy(NHD12832_SPI) != E_NO_ERROR) {}
+    // while(SPIM_Busy(NHD12832_SPI) != E_NO_ERROR) {}
+    // spi_oled.write(cmd, size, NULL, 0);
 
     return E_NO_ERROR;
 }
 
 /* ************************************************************************* */
-static int NHD12832_SendData(const uint8_t *data, uint32_t size)
+static int NHD12832_SendData(const uint8_t *data, int size)
 {
-    GPIO_OutSet(&nhd12832_dc);
+    // GPIO_OutSet(&NHD12832_DC);
+    nhd12832_dc = 1;
 
-    spim_req_t req;
-    req.ssel = NHD12832_SSEL;
-    req.deass = 1;
-    req.tx_data = data;
-    req.rx_data = NULL;
-    req.width = SPIM_WIDTH_1;
-    req.len = size;
+    // spim_req_t req;
+    // req.ssel = NHD12832_SSEL;
+    // req.deass = 1;
+    // req.tx_data = data;
+    // req.rx_data = NULL;
+    // req.width = SPIM_WIDTH_1;
+    // req.len = size;
 
-    if (SPIM_Trans(NHD12832_SPI, &req) != size) {
-        return E_COMM_ERR;
-    }
+    // if (SPIM_Trans(NHD12832_SPI, &req) != size) {
+    //     return E_COMM_ERR;
+    // }
 
-    // Wait for transaction to complete
-    while(SPIM_Busy(NHD12832_SPI) != E_NO_ERROR)     {}
+    // // Wait for transaction to complete
+    // while(SPIM_Busy(NHD12832_SPI) != E_NO_ERROR)     {}
+    // spi_oled.write(data, size, NULL, 0);
 
     return E_NO_ERROR;
 }
@@ -576,8 +587,10 @@ void NHD12832_Clear(uint8_t start_page, uint8_t start_column)
 /* ************************************************************************* */
 int NHD12832_Init(void)
 {
+    nhd12832_res = 0;
+    nhd12832_dc = 0;
+    #if 0
     int err;
-
     // Sets GPIO to desired level for the board
     Board_nhd12832_Init();
 
@@ -586,8 +599,8 @@ int NHD12832_Init(void)
     if ((err = GPIO_Config(&nhd12832_res)) != E_NO_ERROR) {
         return err;
     }
-    GPIO_OutClr(&nhd12832_dc);
-    if ((err =  GPIO_Config(&nhd12832_dc)) != E_NO_ERROR) {
+    GPIO_OutClr(&NHD12832_DC);
+    if ((err =  GPIO_Config(&NHD12832_DC)) != E_NO_ERROR) {
         return err;
     }
 
@@ -598,6 +611,9 @@ int NHD12832_Init(void)
 
     // Reset RES pin for 200us
     GPIO_OutSet(&nhd12832_res);
+    #endif // 0
+
+    nhd12832_res = 1;
 
     // Turn off display
     NHD12832_TurnOnDisplay(0);
