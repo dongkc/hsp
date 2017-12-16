@@ -110,10 +110,10 @@ Timer timestampTimer;
 PushButton pushButton(SW1);
 
 /// BLE instance
-static BLE ble;
+// static BLE ble;
 
 /// HSP BluetoothLE specific functions
-HspBLE hspBLE(&ble);
+// HspBLE hspBLE(&ble);
 USBSerial *usbSerialPtr;
 
 int main() {
@@ -170,10 +170,10 @@ int main() {
   Peripherals::setI2c1(&i2c1);
   Peripherals::setI2c2(&i2c2);
   Peripherals::setPushButton(&pushButton);
-  Peripherals::setBLE(&ble);
+  // Peripherals::setBLE(&ble);
   Peripherals::setMAX14720(&max14720);
   Peripherals::setMAX30001(&max30001);
-  Peripherals::setHspBLE(&hspBLE);
+  // Peripherals::setHspBLE(&hspBLE);
   usbSerialPtr = &usbSerial;
 
   // init the S25FS256 external flash device
@@ -190,7 +190,7 @@ int main() {
   // Initialize BLE base layer
   printf("Init HSPBLE...\n");
   fflush(stdout);
-  hspBLE.init();
+  // hspBLE.init();
 
   // start blinking led1
   printf("Init HSPLED Blink...\n");
@@ -268,7 +268,7 @@ int main() {
     //   rates by about %450 (time to download 32M flash from 90 minutes to about 20 minutes)
     if (RPC_IsTransferingFlashPages() == false) {
       // allow for ble processing
-      ble.waitForEvent();
+      // ble.waitForEvent();
     }
   }
 }

@@ -3,6 +3,5 @@
 .hg
 projectfiles
 *.py*
-USBDevice
 G*
 BUILD
