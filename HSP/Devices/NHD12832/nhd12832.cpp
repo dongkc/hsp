@@ -188,6 +188,9 @@ static int NHD12832_SendCmd(const uint8_t *cmd, int size)
     // while(SPIM_Busy(NHD12832_SPI) != E_NO_ERROR) {}
     // spi_oled.write(cmd, size, NULL, 0);
 
+    char buf[100];
+    spi_oled.write((const char*)cmd, size, buf, 0);
+
     return E_NO_ERROR;
 }
 
