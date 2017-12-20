@@ -592,10 +592,13 @@ int NHD12832_Init(void)
 {
     nhd12832_res = 0;
     nhd12832_dc = 0;
+
+    // TODO: initialize the led module
+    // Sets GPIO to desired level for the board
+    //Board_nhd12832_Init();
+
     #if 0
     int err;
-    // Sets GPIO to desired level for the board
-    Board_nhd12832_Init();
 
     // Configure GPIO
     GPIO_OutClr(&nhd12832_res);
