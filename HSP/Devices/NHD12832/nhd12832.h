@@ -224,8 +224,7 @@ void NHD12832_SetPageAddr(uint8_t start_addr, uint8_t end_addr);
 
 /**
  * @brief      Sets the dim mode for the display.
- * @details    The displays defaults to a @p contrast of 0x80 and a @p brightness of 0x80.
- *
+ @details    The displays defaults to a @p contrast of 0x80 and a @p brightness of 0x80.
  * @param[in]  contrast    The contrast control desired.
  * @param[in]  brightness  The brightness for the area color banks.
  */
