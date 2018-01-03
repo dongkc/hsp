@@ -159,8 +159,9 @@ static uint32_t nhd12832_img_buf[NHD12832_WIDTH *(NUM_PAGES/4)];
 
 static DigitalOut nhd12832_dc(NHD12832_DC);
 static DigitalOut nhd12832_res(NHD12832_RES);
+static DigitalOut spi2_ss(SPI2_SS);
 
-static SPI spi_oled(SPI2_MOSI, NC, SPI2_SCK, SPI2_SS);
+static SPI spi_oled(SPI2_MOSI, NC, SPI2_SCK);
 
 #define E_NO_ERROR 0
 
@@ -188,8 +189,11 @@ static int NHD12832_SendCmd(const uint8_t *cmd, int size)
     // while(SPIM_Busy(NHD12832_SPI) != E_NO_ERROR) {}
     // spi_oled.write(cmd, size, NULL, 0);
 
-    char buf[100];
-    spi_oled.write((const char*)cmd, size, buf, 0);
+    spi_oled.lock();
+    spi2_ss = 0;
+    spi_oled.write((const char*)cmd, size, NULL, 0);
+    spi2_ss = 1;
+    spi_oled.unlock();
 
     return E_NO_ERROR;
 }
@@ -214,7 +218,13 @@ static int NHD12832_SendData(const uint8_t *data, int size)
 
     // // Wait for transaction to complete
     // while(SPIM_Busy(NHD12832_SPI) != E_NO_ERROR)     {}
-    // spi_oled.write(data, size, NULL, 0);
+    spi_oled.lock();
+    spi2_ss = 0;
+
+    spi_oled.write((const char*)data, size, NULL, 0);
+
+    spi2_ss = 1;
+    spi_oled.unlock();
 
     return E_NO_ERROR;
 }
@@ -619,6 +629,7 @@ int NHD12832_Init(void)
     GPIO_OutSet(&nhd12832_res);
     #endif // 0
 
+    wait(0.01);
     nhd12832_res = 1;
 
     // Turn off display

@@ -87,9 +87,21 @@ PushButton pushButton(SW1);
 USBSerial *usbSerialPtr;
 #endif
 
+DigitalOut led1(LED_RED);
+
 int main() {
     // display start banner
+    NHD12832_Init();
+    NHD12832_ShowString((uint8_t*)"MAX32620 EV Kit emo", 0, 4);
+    while(true) {
+      led1 = !led1;
+      wait(0.5);
     printf("Maxim Integrated mbed hSensor 3.0.0 10/14/16\r\n");
+    fflush(stdout);
+    }
+    while(1) {
+    printf("Maxim Integrated mbed hSensor 3.0.0 10/14/16\r\n");
+    }
     fflush(stdout);
     NHD12832_Init();
 
